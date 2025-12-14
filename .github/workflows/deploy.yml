@@ -1,38 +1,33 @@
-name:  Build & Publish API
+name: Build and Deploy
 
 on:
   push:
-    branches: [ "main", "dev" ] # Se déclenche sur main ET dev
-    paths:
-      - 'Scouty.Backend/**'      # Si le Backend change
-      - 'Scouty.Shared/**'       # Si le Shared change
-      - 'Dockerfile'             # Si la recette Docker change
-      - '.github/workflows/**'   # Si ce fichier change
+    branches: [ "main", "dev" ] # Activé pour main ET dev
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  # L'image s'appellera : ghcr.io/ton-pseudo/scouty/api
-  IMAGE_NAME: ${{ github.repository }}/api
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Donne la permission d'écrire dans le registre
+      packages: write
 
     steps:
-      - name:  Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name:  Log in to the Container registry
+      - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name:  Extract metadata
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -41,11 +36,11 @@ jobs:
             type=raw,value=latest
             type=sha
 
-      - name: 🐳 Build and push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .                      #  IMPORTANT : Racine de la solution
-          file: ./Scouty.Backend/Dockerfile
+          context: .
+          file: Scouty.Backend/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
