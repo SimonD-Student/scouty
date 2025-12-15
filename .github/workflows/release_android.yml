@@ -10,7 +10,6 @@ jobs:
     runs-on: windows-latest
 
     env:
-      # Cette variable force .NET à ignorer les erreurs de "Fin de support" (EOL) globalement
       DOTNET_CLI_UI_LANGUAGE: en-US
       CheckEolTargetFramework: false
 
@@ -18,8 +17,7 @@ jobs:
     - name: Récupérer le code
       uses: actions/checkout@v4
 
-    # NOUVEAUTÉ : On force la création d'un fichier global.json pour dire au runner
-    # "N'utilise PAS la version 10 ou 9, reste strictement sur la version 8"
+    # On force le SDK 8 pour éviter les erreurs de version EOL
     - name: Forcer l'utilisation du SDK .NET 8
       run: dotnet new globaljson --sdk-version 8.0.100 --roll-forward latestFeature
 
@@ -28,15 +26,14 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Installer la charge de travail MAUI
-      run: dotnet workload install maui-android maui-ios
+    # CORRECTION ICI : On ajoute "maui-maccatalyst" à la liste
+    - name: Installer les workloads MAUI
+      run: dotnet workload install maui-android maui-ios maui-maccatalyst
 
     - name: Restaurer les dépendances
-      # On ajoute la propriété ici aussi pour éviter le blocage au restore
       run: dotnet restore Scouty.Frontend/Scouty.Frontend.csproj -p:CheckEolTargetFramework=false
 
     - name: Compiler et Publier l'APK
-      # On ajoute --no-restore car on l'a fait juste avant
       run: |
         dotnet publish Scouty.Frontend/Scouty.Frontend.csproj -f net8.0-android -c Release -p:AndroidPackageFormats=apk -p:CheckEolTargetFramework=false --no-restore -o build_output
 
