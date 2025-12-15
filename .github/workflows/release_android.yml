@@ -1,34 +1,44 @@
 name: Build & Release Android App
 
-# Ce pipeline se déclenche UNIQUEMENT quand vous poussez un tag qui commence par "v"
 on:
   push:
     tags:
-      - "v*" # ex: v1.0.0, v1.0.1, etc.
+      - "v*"
 
 jobs:
   build-android:
-    runs-on: windows-latest # Windows est souvent requis pour MAUI/Visual Studio
-    
+    runs-on: windows-latest
+
+    env:
+      # Cette variable force .NET à ignorer les erreurs de "Fin de support" (EOL) globalement
+      DOTNET_CLI_UI_LANGUAGE: en-US
+      CheckEolTargetFramework: false
+
     steps:
     - name: Récupérer le code
       uses: actions/checkout@v4
+
+    # NOUVEAUTÉ : On force la création d'un fichier global.json pour dire au runner
+    # "N'utilise PAS la version 10 ou 9, reste strictement sur la version 8"
+    - name: Forcer l'utilisation du SDK .NET 8
+      run: dotnet new globaljson --sdk-version 8.0.100 --roll-forward latestFeature
 
     - name: Installer .NET 8
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    # CORRECTION 1 : Au lieu d'installer juste "maui-android", on demande à dotnet
-    # d'installer TOUT ce que le projet demande (y compris iOS) pour ne pas bloquer.
-    - name: Installer les workloads requis (Restore)
-      run: dotnet workload restore
+    - name: Installer la charge de travail MAUI
+      run: dotnet workload install maui-android maui-ios
 
-    # CORRECTION 2 : On ajoute "-p:CheckEolTargetFramework=false" pour ignorer l'erreur "Out of support"
-    # On spécifie bien qu'on ne restaure et publie QUE pour Android (-f net8.0-android)
+    - name: Restaurer les dépendances
+      # On ajoute la propriété ici aussi pour éviter le blocage au restore
+      run: dotnet restore Scouty.Frontend/Scouty.Frontend.csproj -p:CheckEolTargetFramework=false
+
     - name: Compiler et Publier l'APK
+      # On ajoute --no-restore car on l'a fait juste avant
       run: |
-        dotnet publish Scouty.Frontend/Scouty.Frontend.csproj -f net8.0-android -c Release -p:AndroidPackageFormats=apk -p:CheckEolTargetFramework=false -o build_output
+        dotnet publish Scouty.Frontend/Scouty.Frontend.csproj -f net8.0-android -c Release -p:AndroidPackageFormats=apk -p:CheckEolTargetFramework=false --no-restore -o build_output
 
     - name: Créer la Release GitHub
       uses: softprops/action-gh-release@v1
