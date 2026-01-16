@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Scouty.Frontend.ViewModels"
+             x:Class="Scouty.Frontend.CreateAccountPage"
+             x:DataType="vm:CreateAccountViewModel"
+             Title="CreateAccountPage"
+             BackgroundColor="White"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+    
+    
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="InputBackground">#F8F9FA</Color>
+            <Style x:Key="FormLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource bleu4}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Margin" Value="0,0,0,5" />
+            </Style>
+            <Style x:Key="InputBorderStyle" TargetType="Border">
+                <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{StaticResource InputBackground}" />
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="25">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,10,0,20">
+                <Grid Grid.Column="0" WidthRequest="45" HeightRequest="45" VerticalOptions="Center" HorizontalOptions="Start" BackgroundColor="Transparent">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Path Data="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"
+                          Fill="{StaticResource bleu3}" Aspect="Uniform" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Grid>
+
+                <Label Text="Création de Compte" Grid.Column="1" TextColor="{StaticResource bleu5}" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Grid>
+
+            <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" HorizontalOptions="Center"/>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Prénom" Style="{StaticResource FormLabelStyle}" />
+                    <Border Style="{StaticResource InputBorderStyle}">
+                        <Entry Placeholder="Jean" Text="{Binding Firstname}" PlaceholderColor="Gray" TextColor="{StaticResource bleu5}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Nom" Style="{StaticResource FormLabelStyle}" />
+                    <Border Style="{StaticResource InputBorderStyle}">
+                        <Entry Placeholder="Dupont" Text="{Binding Lastname}" PlaceholderColor="Gray" TextColor="{StaticResource bleu5}" />
+                    </Border>
+                </VerticalStackLayout>
+            </Grid>
+
+            <VerticalStackLayout>
+                <Label Text="Totem" Style="{StaticResource FormLabelStyle}" />
+                <Border Style="{StaticResource InputBorderStyle}">
+                    <Entry Placeholder="Agouti" Text="{Binding Totem}" PlaceholderColor="Gray" TextColor="{StaticResource bleu5}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Email" Style="{StaticResource FormLabelStyle}" />
+                <Border Style="{StaticResource InputBorderStyle}">
+                    <Entry Placeholder="votre.email@exemple.com" Text="{Binding Email}" Keyboard="Email" PlaceholderColor="Gray" TextColor="{StaticResource bleu5}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Mot de passe" Style="{StaticResource FormLabelStyle}" />
+                <Border Style="{StaticResource InputBorderStyle}">
+                    <Grid ColumnDefinitions="*, 40">
+                        <Entry Placeholder="........" Text="{Binding Password}" IsPassword="True" PlaceholderColor="Gray" TextColor="{StaticResource bleu5}" VerticalOptions="Center"/>
+                        <Path Grid.Column="1" Data="M12,4.5C7,4.5,2.73,7.61,1,12c1.73,4.39,6,7.5,11,7.5s9.27-3.11,11-7.5C21.27,7.61,17,4.5,12,4.5z M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5s5,2.24,5,5S14.76,17,12,17z M12,9c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S13.66,9,12,9z" Fill="Gray" Aspect="Uniform" HeightRequest="25" WidthRequest="25" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Section" Style="{StaticResource FormLabelStyle}" />
+                <Border Style="{StaticResource InputBorderStyle}">
+                    <Picker Title="Choisir une section" 
+                            TextColor="{StaticResource bleu5}" 
+                            TitleColor="{StaticResource bleu5}"
+                            SelectedItem="{Binding SelectedSection}"
+                            ItemsSource="{Binding SectionList}">
+                    </Picker>
+                </Border>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Spacing="10">
+                <CheckBox Color="{StaticResource bleu3}" IsChecked="{Binding IsChef}" />
+                <Label Text="Je suis le chef responsable" TextColor="{StaticResource bleu4}" FontAttributes="Bold" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource bleu1}" />
+
+            <Button Text="Créer mon compte"
+                    Command="{Binding RegisterCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    BackgroundColor="{StaticResource bleu1}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    Margin="0,20,0,10"/>
+
+            <Label HorizontalOptions="Center" Margin="0,0,0,20">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Déjà un compte ? " TextColor="Gray" />
+                        <Span Text="Se connecter" TextColor="{StaticResource bleu3}" FontAttributes="Bold" TextDecorations="Underline"/>
+                    </FormattedString>
+                </Label.FormattedText>
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+    
+    

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Scouty.Frontend.ViewModels"
+             x:DataType="viewmodels:AddEventViewModel"
+             x:Class="Scouty.Frontend.AddEventPage"
+             Title="Nouvel Événement"
+             BackgroundColor="#F3F4F6">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="Informations" TextColor="#003E5C" FontAttributes="Bold" FontSize="18"/>
+
+            <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5" StrokeThickness="0">
+                <Entry Placeholder="Titre (ex: Réunion Chefs)" Text="{Binding Title}" FontSize="16"/>
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5" StrokeThickness="0">
+                <Editor Placeholder="Description..." Text="{Binding Description}" HeightRequest="80" FontSize="14"/>
+            </Border>
+
+            <Grid ColumnDefinitions="*, *">
+                <DatePicker Date="{Binding Date}" Format="dd/MM/yyyy" TextColor="#003E5C" BackgroundColor="White" Margin="0,0,5,0"/>
+                <TimePicker Time="{Binding Time}" Format="HH:mm" TextColor="#003E5C" BackgroundColor="White" Grid.Column="1" Margin="5,0,0,0"/>
+            </Grid>
+
+            <Label Text="Inviter des sections entières" TextColor="#003E5C" FontAttributes="Bold" FontSize="16" Margin="0,10,0,0"/>
+
+            <CollectionView ItemsSource="{Binding SectionsList}" HeightRequest="120">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:SectionSelection">
+                        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" StrokeThickness="0" Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <CheckBox IsChecked="{Binding IsSelected}" Color="#04BBFF"/>
+                                <Label Text="{Binding Name}" VerticalOptions="Center" TextColor="#1F2937"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Inviter des scouts spécifiques" TextColor="#003E5C" FontAttributes="Bold" FontSize="16" Margin="0,10,0,0"/>
+
+            <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" StrokeThickness="0" Padding="10" HeightRequest="200">
+                <CollectionView ItemsSource="{Binding UsersList}">
+                    <CollectionView.EmptyView>
+                        <Label Text="Chargement des scouts..." TextColor="Gray" HorizontalOptions="Center"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:UserSelection">
+                            <Grid ColumnDefinitions="40, *" Padding="0,5">
+                                <CheckBox IsChecked="{Binding IsSelected}" Color="#04BBFF"/>
+                                <Label Grid.Column="1" Text="{Binding Name}" VerticalOptions="Center" TextColor="#374151"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+
+            <Button Text="Créer l'événement" 
+                    Command="{Binding CreateCommand}"
+                    BackgroundColor="#04BBFF"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    Margin="0,20"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

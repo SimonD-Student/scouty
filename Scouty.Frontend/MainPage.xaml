@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Scouty.Frontend.ViewModels"
              x:Class="Scouty.Frontend.MainPage"
+             x:DataType="vm:LoginViewModel"
              BackgroundColor="White">
-
-    <Grid RowDefinitions="Auto, Auto, *">
+             <Grid RowDefinitions="Auto, Auto, *">
 
         <Grid Grid.Row="0" ColumnDefinitions="50, *" Padding="10,15">
             <Label Text="&#xE72B;" 
@@ -22,10 +23,7 @@
                    FontAttributes="Bold"/>
         </Grid>
 
-        <BoxView Grid.Row="1" 
-                 HeightRequest="1" 
-                 Color="#E5E5E5" 
-                 VerticalOptions="End"/>
+        <BoxView Grid.Row="1" HeightRequest="1" Color="#E5E5E5" VerticalOptions="End"/>
 
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Padding="30,20" Spacing="20">
@@ -38,72 +36,61 @@
                        FontAttributes="Bold"
                        Margin="0,0,0,10"/>
 
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Adresse e-mail" 
-                           TextColor="Black" 
-                           FontAttributes="Bold" 
-                           FontSize="14"/>
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasError}"
+                       TextColor="Red"
+                       FontSize="12"
+                       HorizontalOptions="Center" />
 
-                    <Border Stroke="#E5E5E5" 
-                            StrokeThickness="1" 
-                            StrokeShape="RoundRectangle 8"
-                            HeightRequest="50"
-                            Padding="15,0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Adresse e-mail" TextColor="Black" FontAttributes="Bold" FontSize="14"/>
+                    <Border Stroke="#E5E5E5" StrokeThickness="1" StrokeShape="RoundRectangle 8" HeightRequest="50" Padding="15,0">
                         <Grid ColumnDefinitions="30, *">
                             <Path Data="M20,4H4C2.9,4,2,4.9,2,6v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z M20,8l-8,5L4,8V6l8,5l8-5V8z"
-                                  Fill="#04BBFF"
-                                  Aspect="Uniform"
-                                  HeightRequest="20"
-                                  HorizontalOptions="Start"
-                                  VerticalOptions="Center"/>
-
+                                  Fill="#04BBFF" Aspect="Uniform" HeightRequest="25" WidthRequest="25" HorizontalOptions="Start" VerticalOptions="Center"/>
+                            
                             <Entry Grid.Column="1"
+                                   Text="{Binding Email}"
                                    Placeholder="entrez votre e-mail"
                                    TextColor="Black"
                                    PlaceholderColor="#A0A0A0"
                                    VerticalOptions="Center"
-                                   Margin="5,0,0,0"/>
+                                   Margin="5,0,0,0"
+                                   Keyboard="Email"
+                                   ReturnType="Next"/>
                         </Grid>
                     </Border>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Mot de passe" 
-                           TextColor="Black" 
-                           FontAttributes="Bold" 
-                           FontSize="14"/>
-
-                    <Border Stroke="#E5E5E5" 
-                            StrokeThickness="1" 
-                            StrokeShape="RoundRectangle 8"
-                            HeightRequest="50"
-                            Padding="15,0">
+                    <Label Text="Mot de passe" TextColor="Black" FontAttributes="Bold" FontSize="14"/>
+                    <Border Stroke="#E5E5E5" StrokeThickness="1" StrokeShape="RoundRectangle 8" HeightRequest="50" Padding="15,0">
                         <Grid ColumnDefinitions="30, *">
                             <Path Data="M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10 C20,8.9,19.1,8,18,8z M12,17c-1.1,0-2-0.9-2-2c0-1.1,0.9-2,2-2s2,0.9,2,2C14,16.1,13.1,17,12,17z M9,8V6c0-1.66,1.34-3,3-3s3,1.34,3,3v2H9z"
-                                  Fill="#04BBFF"
-                                  Aspect="Uniform"
-                                  HeightRequest="20"
-                                  HorizontalOptions="Start"
-                                  VerticalOptions="Center"/>
-
+                                  Fill="#04BBFF" Aspect="Uniform" HeightRequest="25" WidthRequest="25" HorizontalOptions="Start" VerticalOptions="Center"/>
+                            
                             <Entry Grid.Column="1"
+                                   Text="{Binding Password}"
                                    IsPassword="True"
                                    Placeholder="entrez votre mot de passe"
                                    TextColor="Black"
                                    PlaceholderColor="#A0A0A0"
                                    VerticalOptions="Center"
-                                   Margin="5,0,0,0"/>
+                                   Margin="5,0,0,0"
+                                   ReturnType="Done"/>
                         </Grid>
                     </Border>
                 </VerticalStackLayout>
 
-                <Label Text="Mot de passe oublié ?"
-                       TextColor="#04BBFF"
-                       FontSize="13"
-                       FontAttributes="Bold"
-                       HorizontalOptions="End"/>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                                   IsVisible="{Binding IsBusy}"
+                                   Color="#04BBFF"
+                                   HorizontalOptions="Center"/>
 
                 <Button Text="Se connecter"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
                         TextColor="White"
                         BackgroundColor="#04BBFF"
                         FontAttributes="Bold"
@@ -112,15 +99,10 @@
                         Margin="0,10,0,0"/>
 
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,10,0,0">
-                    <Label Text="Pas encore de compte ?" 
-                           TextColor="#1a1a1a"
-                           FontSize="14"/>
-                    <Label Text="S'inscrire" 
-                           TextColor="#04BBFF" 
-                           FontAttributes="Bold"
-                           FontSize="14">
+                    <Label Text="Pas encore de compte ?" TextColor="#1a1a1a" FontSize="14"/>
+                    <Label Text="S'inscrire" TextColor="#04BBFF" FontAttributes="Bold" FontSize="14">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer />
+                            <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
                         </Label.GestureRecognizers>
                     </Label>
                 </HorizontalStackLayout>

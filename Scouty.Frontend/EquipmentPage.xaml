@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Scouty.Frontend.ViewModels"
+             xmlns:dtos="clr-namespace:Scouty.Shared.DTOs;assembly=Scouty.Shared"
+             x:DataType="viewmodels:EquipmentViewModel"
+             x:Class="Scouty.Frontend.EquipmentPage"
+             Title="Matériel"
+             BackgroundColor="#F3F4F6">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="+" Command="{Binding AddCategoryCommand}" Order="Primary"/>
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <CollectionView ItemsSource="{Binding Categories}" Margin="15">
+            <CollectionView.EmptyView>
+                <Label Text="Aucun matériel inventorié." HorizontalOptions="Center" VerticalOptions="Center" TextColor="Gray"/>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:EquipmentCategoryDto">
+                    <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" StrokeThickness="0" Margin="0,0,0,15" Padding="0">
+                        <VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*, Auto, Auto" BackgroundColor="#003C57" Padding="15,10">
+                                <Label Grid.Column="0" Text="{Binding Name}" TextColor="White" FontAttributes="Bold" FontSize="16" VerticalOptions="Center"/>
+                                <ImageButton Grid.Column="1" Source="{FontImage Glyph='+', Color=White, Size=20}" 
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EquipmentViewModel}}, Path=AddItemCommand}"
+                                             CommandParameter="{Binding .}"
+                                             HeightRequest="30" WidthRequest="30" Margin="0,0,10,0"/>
+                                <ImageButton Grid.Column="2" Source="{FontImage Glyph='X', Color=#EF4444, Size=18}" 
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EquipmentViewModel}}, Path=DeleteCategoryCommand}"
+                                             CommandParameter="{Binding .}"
+                                             HeightRequest="30" WidthRequest="30"/>
+                            </Grid>
+
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Padding="15,10" Spacing="8">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="dtos:EquipmentItemDto">
+                                        <Border StrokeShape="RoundRectangle 5" BackgroundColor="#F8FAFC" StrokeThickness="0" Padding="10">
+                                            <Grid ColumnDefinitions="30, *, Auto">
+                                                <Border Grid.Column="0" BackgroundColor="#04BBFF" StrokeShape="RoundRectangle 15" HeightRequest="30" WidthRequest="30" StrokeThickness="0">
+                                                    <Label Text="{Binding Quantity}" TextColor="White" FontSize="12" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                                </Border>
+
+                                                <Label Grid.Column="1" Text="{Binding Name}" TextColor="#051C24" VerticalOptions="Center" Margin="10,0"/>
+
+                                                <ImageButton Grid.Column="2" Source="{FontImage Glyph='-', Color=Gray, Size=20}"
+                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EquipmentViewModel}}, Path=DeleteItemCommand}"
+                                                             CommandParameter="{Binding .}"
+                                                             HeightRequest="30" WidthRequest="30"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="#04BBFF" HorizontalOptions="Center" VerticalOptions="Center"/>
+    </Grid>
+</ContentPage>

@@ -8,7 +8,15 @@
     Title="Scouty.Frontend">
 
     <ShellContent
+        Title="Login"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage"
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
+    <ShellContent
+        Title="Dashboard"
+        ContentTemplate="{DataTemplate local:DashboardPage}"
+        Route="DashboardPage" />
 
 </Shell>

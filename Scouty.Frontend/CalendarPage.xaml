@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Scouty.Frontend.ViewModels"
+             xmlns:dtos="clr-namespace:Scouty.Shared.DTOs;assembly=Scouty.Shared"
+             xmlns:cal="clr-namespace:Plugin.Maui.Calendar.Controls;assembly=Plugin.Maui.Calendar"
+             x:DataType="viewmodels:CalendarViewModel"
+             x:Class="Scouty.Frontend.CalendarPage"
+             Title="Calendrier"
+             BackgroundColor="#F3F4F6">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="+" Command="{Binding AddEventCommand}" Order="Primary"/>
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Border Grid.Row="0" StrokeShape="RoundRectangle 0,0,20,20" StrokeThickness="0" BackgroundColor="White" Padding="10" Margin="0,0,0,10">
+            <cal:Calendar Events="{Binding Events}"
+                          SelectedDate="{Binding SelectedDate}"
+                          EventIndicatorColor="#04BBFF"
+                          EventIndicatorSelectedColor="White"
+                          ArrowsColor="#003E5C"
+                          SelectedDayBackgroundColor="#003E5C"
+                          SelectedDayTextColor="White"
+                          TodayOutlineColor="#04BBFF"
+                          DaysTitleColor="Gray"
+                          OtherMonthDayIsVisible="False"/>
+        </Border>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding FilteredEvents}" Margin="15,0">
+            <CollectionView.Header>
+                <Label Text="{Binding SelectedDate, StringFormat='Événements du {0:dd MMMM}'}" 
+                       FontSize="18" FontAttributes="Bold" Margin="0,0,0,10" TextColor="#1F2937"/>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="Rien de prévu ce jour-là." TextColor="Gray"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:CalendarEventDto">
+                    <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" StrokeThickness="0" Padding="15" Margin="0,0,0,10">
+                        <Grid RowDefinitions="Auto, Auto, Auto">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="#003E5C" FontSize="16"/>
+                                <Label Grid.Column="1" Text="{Binding StartDate, StringFormat='{0:HH:mm}'}" TextColor="#04BBFF" FontAttributes="Bold"/>
+                            </Grid>
+
+                            <Label Grid.Row="1" Text="{Binding Description}" TextColor="Gray" FontSize="14" Margin="0,5"/>
+
+                            <StackLayout Grid.Row="2" Orientation="Horizontal" Spacing="5">
+                                <Label Text="Par:" FontSize="10" TextColor="Gray"/>
+                                <Label Text="{Binding CreatorName}" FontSize="10" FontAttributes="Italic" TextColor="#1F2937"/>
+
+                                <Label Text="|" FontSize="10" TextColor="Gray" Margin="5,0"/>
+
+                                <Label Text="Pour:" FontSize="10" TextColor="Gray"/>
+                                <Label Text="{Binding ParticipantsDisplay}" FontSize="10" TextColor="#1F2937" LineBreakMode="TailTruncation"/>
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
