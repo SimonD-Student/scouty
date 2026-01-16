@@ -1,28 +1,38 @@
-﻿using Microsoft.Maui.Devices; // <--- Indispensable pour DeviceInfo
+﻿using Microsoft.Maui.Devices;
 
 namespace Scouty.Frontend.Services;
 
 public static class ApiConfig
 {
-    // Remets bien ton IP locale ici (celle de ton PC)
+    // IP de ton PC pour le dev (Ton téléphone physique l'utilise)
     private const string LocalIpAddress = "192.168.1.57";
+
+    // URL DE PRODUCTION (Le VPS)
+    private const string ProductionUrl = "https://api.arcturusdev.tech";
 
     public static string BaseUrl
     {
         get
         {
-            // 1. Android
+            // --- 1. MODE PRODUCTION (Release) ---
+            // Ce code s'active UNIQUEMENT quand tu génères l'APK pour le Store.
+            // Le compilateur efface le reste.
+#if !DEBUG
+            return ProductionUrl;
+#endif
+
+            // --- 2. MODE DÉVELOPPEMENT (Debug) ---
             if (DeviceInfo.Platform == DevicePlatform.Android)
             {
-                // Si c'est l'émulateur, on utilise l'adresse magique
-                if (DeviceInfo.DeviceType == DeviceType.Virtual)
+                // Émulateur -> 10.0.2.2
+                if (DeviceInfo.DeviceType == DeviceType.Virtual || DeviceInfo.Model.Contains("sdk") || DeviceInfo.Model.Contains("emulator"))
                     return "https://10.0.2.2:7216";
 
-                // Sinon (Téléphone physique), on utilise l'IP du PC
+                // Téléphone physique -> Ton PC
                 return $"https://{LocalIpAddress}:7216";
             }
 
-            // 2. Windows / iOS
+            // Windows / iOS Simulator
             return "https://localhost:7216";
         }
     }
