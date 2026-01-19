@@ -46,7 +46,7 @@ jobs:
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
-            -f net8.0-android `
+            -f net8.0-android34.0 `
             -c Release `
             -p:AndroidPackageFormat=aab `
             -p:AndroidKeyStore=true `
@@ -55,6 +55,7 @@ jobs:
             -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
             -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" `
             -p:TreatWarningsAsErrors=false
+            -p:CheckEolTargetFramework=false
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
