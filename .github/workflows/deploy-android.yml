@@ -1,0 +1,51 @@
+name: Build Android App
+
+on:
+  push:
+    branches: [ "dev" ]
+    paths:
+      - 'Scouty.Frontend/**'
+      - 'Scouty.Shared/**'
+      - '.github/workflows/deploy-android.yml'
+
+jobs:
+  build-android:
+    runs-on: windows-latest # Windows est requis pour MAUI Android
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui-android
+
+      # On recrée le fichier keystore physique à partir du secret Base64
+      - name: Decode Keystore
+        run: |
+          $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
+          [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
+
+      # On compile et on signe
+      - name: Publish Android App
+        run: |
+          dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
+            -f net8.0-android `
+            -c Release `
+            -p:AndroidPackageFormat=aab `
+            -p:AndroidKeyStore=true `
+            -p:AndroidSigningKeyStore="scouty.keystore" `
+            -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" `
+            -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
+            -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+
+      # On rend le fichier .aab disponible au téléchargement
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Scouty-Android-Bundle
+          path: Scouty.Frontend/bin/Release/net8.0-android/publish/*-Signed.aab
