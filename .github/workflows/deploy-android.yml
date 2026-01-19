@@ -54,7 +54,7 @@ jobs:
             -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" `
             -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
             -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" `
-            -p:TreatWarningsAsErrors=false
+            -p:TreatWarningsAsErrors=false `
             -p:CheckEolTargetFramework=false
 
       - name: Upload Artifact
