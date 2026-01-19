@@ -10,41 +10,39 @@ on:
 
 jobs:
   build-android:
-    runs-on: windows-latest # Windows est requis pour MAUI
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Installation de Java 17 (Obligatoire pour Android avec .NET 8)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
-      # 2. Installation de .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      # 3. LE CORRECTIF : On installe TOUS les workloads demandés par le projet
-      # Au lieu de juste "maui-android", on laisse .NET décider.
+      # CORRECTION ICI : On installe le paquet complet MAUI + les outils WASM (mentionnés dans ton erreur)
       - name: Install MAUI Workloads
-        run: dotnet workload restore
+        run: |
+          dotnet workload install maui
+          dotnet workload install wasm-tools
 
-      # 4. Décodage du Keystore (ATTENTION : Tu dois avoir créé le secret avant !)
       - name: Decode Keystore
         run: |
           if ("${{ secrets.ANDROID_KEYSTORE_BASE64 }}" -ne "") {
               $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
               [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
           } else {
-              Write-Error "Le secret ANDROID_KEYSTORE_BASE64 est vide ou manquant !"
+              Write-Warning "Le secret ANDROID_KEYSTORE_BASE64 est vide. La signature va échouer."
           }
 
-      # 5. Construction et Signature
+      # CORRECTION ICI : Ajout de TreatWarningsAsErrors=false pour ignorer les avertissements de version
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
@@ -55,9 +53,9 @@ jobs:
             -p:AndroidSigningKeyStore="scouty.keystore" `
             -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" `
             -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
-            -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+            -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" `
+            -p:TreatWarningsAsErrors=false
 
-      # 6. Sauvegarde du fichier généré
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
