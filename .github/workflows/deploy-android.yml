@@ -10,27 +10,41 @@ on:
 
 jobs:
   build-android:
-    runs-on: windows-latest # Windows est requis pour MAUI Android
+    runs-on: windows-latest # Windows est requis pour MAUI
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1. Installation de Java 17 (Obligatoire pour Android avec .NET 8)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      # 2. Installation de .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      - name: Install MAUI Workload
-        run: dotnet workload install maui-android
+      # 3. LE CORRECTIF : On installe TOUS les workloads demandés par le projet
+      # Au lieu de juste "maui-android", on laisse .NET décider.
+      - name: Install MAUI Workloads
+        run: dotnet workload restore
 
-      # On recrée le fichier keystore physique à partir du secret Base64
+      # 4. Décodage du Keystore (ATTENTION : Tu dois avoir créé le secret avant !)
       - name: Decode Keystore
         run: |
-          $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
-          [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
+          if ("${{ secrets.ANDROID_KEYSTORE_BASE64 }}" -ne "") {
+              $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
+              [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
+          } else {
+              Write-Error "Le secret ANDROID_KEYSTORE_BASE64 est vide ou manquant !"
+          }
 
-      # On compile et on signe
+      # 5. Construction et Signature
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
@@ -43,7 +57,7 @@ jobs:
             -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
             -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
 
-      # On rend le fichier .aab disponible au téléchargement
+      # 6. Sauvegarde du fichier généré
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
