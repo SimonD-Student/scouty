@@ -6,7 +6,7 @@
 
 		<AssetTargetFallback>net8.0-android34.0</AssetTargetFallback>
 
-		<NoWarn>$(NoWarn);NETSDK1202;NU1701;NU1702</NoWarn>
+		<NoWarn>$(NoWarn);NETSDK1202;NU1701;NU1702;CS8618</NoWarn>
 
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
@@ -19,11 +19,13 @@
 		<Nullable>enable</Nullable>
 		<ApplicationTitle>Scouty</ApplicationTitle>
 		<ApplicationId>com.companyname.scouty.frontend</ApplicationId>
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+
+		<ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</TargetPlatformVersion>
+
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">35.0</TargetPlatformVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
