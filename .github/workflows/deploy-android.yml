@@ -8,7 +8,7 @@ on:
       - 'Scouty.Shared/**'
       - '.github/workflows/deploy-android.yml'
 
-# VARIABLE GLOBALE POUR DÉSACTIVER L'ERREUR DE DATE
+# Variable globale pour désactiver la sécurité de date sur tout le serveur
 env:
   CheckEolTargetFramework: false
 
@@ -31,8 +31,9 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      # On force l'installation du module Android explicitement.
       - name: Install MAUI Workloads
-        run: dotnet workload restore
+        run: dotnet workload install maui-android --ignore-failed-sources
 
       - name: Decode Keystore
         run: |
