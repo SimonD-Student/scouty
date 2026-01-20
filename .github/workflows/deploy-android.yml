@@ -9,9 +9,7 @@ on:
       - '.github/workflows/deploy-android.yml'
 
 env:
-  # On désactive la vérification de date (EOL) globalement
   CheckEolTargetFramework: false
-  # On dit à .NET d'ignorer tout ce qui n'est pas .NET 8
   DOTNET_MULTILEVEL_LOOKUP: 0
 
 jobs:
@@ -22,8 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # NOUVEAU : On crée le fichier global.json pour FORCER la version 8.0.404
-      # Cela empêche le serveur d'utiliser .NET 10 ou 9 par erreur.
+      # Force la version .NET 8 stable
       - name: Create global.json
         run: |
           New-Item -Path . -Name "global.json" -ItemType "file" -Value '{ "sdk": { "version": "8.0.404", "rollForward": "latestFeature" } }' -Force
@@ -37,18 +34,21 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.404 # On aligne cette version avec le global.json
+          dotnet-version: 8.0.404
 
-      # INSTALLATION MUSCLÉE
-      # On installe tout le paquet 'maui', pas juste android, pour être sûr d'avoir les libs de base.
       - name: Install MAUI Workloads
         run: dotnet workload install maui --ignore-failed-sources
 
+      # LE CORRECTIF 
       - name: Decode Keystore
         run: |
           if ("${{ secrets.ANDROID_KEYSTORE_BASE64 }}" -ne "") {
               $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
-              [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
+              # On place le fichier là où le projet l'attend
+              [IO.File]::WriteAllBytes("Scouty.Frontend/scouty.keystore", $bytes)
+          } else {
+              Write-Error "ERREUR CRITIQUE : Le secret ANDROID_KEYSTORE_BASE64 est vide."
+              exit 1
           }
 
       - name: Publish Android App
