@@ -37,10 +37,11 @@ jobs:
               [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
           }
 
+      # ATTENTION : Regarde bien l'option -f ci-dessous
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
-            -f net8.0-android `
+            -f net8.0-android34.0 `
             -c Release `
             -p:AndroidPackageFormat=aab `
             -p:AndroidKeyStore=true `
@@ -55,4 +56,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Scouty-Android-Bundle
-          path: Scouty.Frontend/bin/Release/net8.0-android/publish/*-Signed.aab
+          # Le chemin de sortie change aussi pour inclure "android34.0"
+          path: Scouty.Frontend/bin/Release/net8.0-android34.0/publish/*-Signed.aab
