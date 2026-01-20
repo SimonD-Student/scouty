@@ -4,6 +4,8 @@
 		<TargetFrameworks>net8.0-android</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 
+		<AssetTargetFallback>net8.0-android34.0</AssetTargetFallback>
+
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 
@@ -34,7 +36,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
-		<PackageReference Include="Microcharts.Maui" Version="0.9.5.9" />
+		<PackageReference Include="Microcharts.Maui" Version="1.0.1" />
 
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="Plugin.Maui.Calendar" Version="1.2.6" />
