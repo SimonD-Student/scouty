@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
@@ -12,19 +13,18 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
 		<ApplicationTitle>Scouty</ApplicationTitle>
 		<ApplicationId>com.companyname.scouty.frontend</ApplicationId>
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</SupportedOSPlatformVersion>
-
-		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</TargetPlatformVersion>
+		<SupportedOSPlatformVersion>34.0</SupportedOSPlatformVersion>
+		<TargetPlatformVersion>34.0</TargetPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('windows'))">
-		<TargetFrameworks>$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+	<PropertyGroup Condition="$(TargetFramework.Contains('windows'))">
+		<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
