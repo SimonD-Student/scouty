@@ -27,22 +27,17 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      # CORRECTION ICI : On installe le paquet complet MAUI + les outils WASM (mentionnés dans ton erreur)
       - name: Install MAUI Workloads
-        run: |
-          dotnet workload install maui
-          dotnet workload install wasm-tools
+        run: dotnet workload restore
 
       - name: Decode Keystore
         run: |
           if ("${{ secrets.ANDROID_KEYSTORE_BASE64 }}" -ne "") {
               $bytes = [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
               [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
-          } else {
-              Write-Warning "Le secret ANDROID_KEYSTORE_BASE64 est vide. La signature va échouer."
           }
 
-      # CORRECTION ICI : Ajout de TreatWarningsAsErrors=false pour ignorer les avertissements de version
+      # ATTENTION : La syntaxe ici est critique (backticks ` en fin de ligne)
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
@@ -61,4 +56,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Scouty-Android-Bundle
-          path: Scouty.Frontend/bin/Release/net8.0-android/publish/*-Signed.aab
+          path: Scouty.Frontend/bin/Release/net8.0-android34.0/publish/*-Signed.aab

@@ -5,7 +5,7 @@
 
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-		<NoWarn>$(NoWarn);NETSDK1202</NoWarn>
+		<NoWarn>$(NoWarn);NETSDK1202;NU1202</NoWarn>
 
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Scouty.Frontend</RootNamespace>
@@ -20,12 +20,10 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-
-		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</TargetPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+	<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('windows'))">
+		<TargetFrameworks>$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -49,25 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<MauiXaml Update="AddEventPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="AddTransactionPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="BudgetPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="CalendarPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="CreateAccountPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="DashboardPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="EquipmentPage.xaml">
+		<MauiXaml Update="**\*.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 	</ItemGroup>
