@@ -70,9 +70,9 @@ public class AuthService : IAuthService
 
             var response = await _httpClient.PostAsJsonAsync("register", registerDto);
 
-            // --- CHANGEMENT ICI : AUTO-LOGIN APRÈS INSCRIPTION ---
             if (response.IsSuccessStatusCode)
             {
+                // ... (Code existant pour le login automatique) ...
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
                 if (result != null && !string.IsNullOrEmpty(result.Token))
                 {
@@ -82,11 +82,22 @@ public class AuthService : IAuthService
                     return true;
                 }
             }
+            else
+            {
+                // --- AJOUT DIAGNOSTIC ---
+                // On lit ce que le serveur nous a répondu (le message d'erreur)
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                // On l'écrit dans les logs avec un tag facile à trouver
+                Console.WriteLine($"[SCOUTY_ERROR] Status: {response.StatusCode}");
+                Console.WriteLine($"[SCOUTY_ERROR] Server Response: {errorContent}");
+            }
+
             return false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur Register: {ex.Message}");
+            Console.WriteLine($"[SCOUTY_ERROR] Exception: {ex.Message}");
             return false;
         }
     }
