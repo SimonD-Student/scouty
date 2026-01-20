@@ -1,0 +1,40 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [ "dev" ] # Se déclenche sur tes branches principales
+  workflow_dispatch: # Permet de le lancer manuellement si besoin
+
+jobs:
+  build-windows:
+    runs-on: windows-latest # OBLIGATOIRE : On a besoin de Windows pour compiler du WinUI
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Install MAUI Workload
+      run: dotnet workload install maui
+
+    - name: Restore Dependencies
+      run: dotnet restore Scouty.Frontend/Scouty.Frontend.csproj
+
+    # C'est ici que la magie opère
+    # -f : On force la cible Windows
+    # -p:WindowsPackageType=None : On veut un EXE classique, pas un MSIX chiffré
+    # -p:WindowsAppSDKSelfContained=true : On inclut tout ce qu'il faut pour que ça tourne
+    - name: Publish Windows App
+      run: |
+        dotnet publish Scouty.Frontend/Scouty.Frontend.csproj -f net8.0-windows10.0.19041.0 -c Release -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true -o ./win_output
+
+    # On upload le résultat pour que tu puisses le télécharger
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Scouty-Windows-App
+        path: ./win_output

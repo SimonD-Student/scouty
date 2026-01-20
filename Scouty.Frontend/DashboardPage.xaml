@@ -29,7 +29,7 @@
                     <VerticalStackLayout Grid.Column="0">
                         <Label Text="Solde Actuel" TextColor="#A0C4D6" FontSize="14"/>
 
-                        <Label Text="{Binding Summary.CurrentBalance, StringFormat='{0:C} €'}" 
+                        <Label Text="{Binding Summary.CurrentBalance, StringFormat='{0:C}'}" 
                                TextColor="White" 
                                FontSize="32" 
                                FontAttributes="Bold"

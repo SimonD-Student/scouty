@@ -12,6 +12,15 @@ namespace Scouty.Frontend
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseSentry(options => {
+                    options.Dsn = "https://bf27eeb2b700f89f8cb093153722fa45@o4510743988928512.ingest.de.sentry.io/4510744010686544";
+
+                    // Utile pour le debug : voit les logs Sentry dans la console
+                    options.Debug = true;
+
+                    // Capture 100% des traces de performance (Navigation, temps de chargement)
+                    options.TracesSampleRate = 1.0;
+                })
                 .UseMicrocharts()
                 .ConfigureFonts(fonts =>
                 {

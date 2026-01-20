@@ -58,7 +58,8 @@ public partial class CreateAccountViewModel : BaseViewModel
             // Appel API simulé
             // Note : Pour l'instant, on passe encore les anciens paramètres.
             // Quand on fera le backend, on passera un objet "RegisterRequestDto" complet.
-            bool success = await _authService.RegisterAsync(Firstname, Lastname, Totem, Email, Password, SelectedSection, IsChef);
+            // Ordre correct : Prénom, Nom, EMAIL, PASSWORD, TOTEM, Section, Chef
+            bool success = await _authService.RegisterAsync(Firstname, Lastname, Email, Password, Totem, SelectedSection, IsChef);
 
             if (success)
             {
