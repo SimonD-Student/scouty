@@ -8,9 +8,11 @@ on:
       - 'Scouty.Shared/**'
       - '.github/workflows/deploy-android.yml'
 
-# Variable globale pour désactiver la sécurité de date sur tout le serveur
 env:
+  # On désactive la vérification de date (EOL) globalement
   CheckEolTargetFramework: false
+  # On dit à .NET d'ignorer tout ce qui n'est pas .NET 8
+  DOTNET_MULTILEVEL_LOOKUP: 0
 
 jobs:
   build-android:
@@ -19,6 +21,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # NOUVEAU : On crée le fichier global.json pour FORCER la version 8.0.404
+      # Cela empêche le serveur d'utiliser .NET 10 ou 9 par erreur.
+      - name: Create global.json
+        run: |
+          New-Item -Path . -Name "global.json" -ItemType "file" -Value '{ "sdk": { "version": "8.0.404", "rollForward": "latestFeature" } }' -Force
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -29,11 +37,12 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 8.0.404 # On aligne cette version avec le global.json
 
-      # On force l'installation du module Android explicitement.
+      # INSTALLATION MUSCLÉE
+      # On installe tout le paquet 'maui', pas juste android, pour être sûr d'avoir les libs de base.
       - name: Install MAUI Workloads
-        run: dotnet workload install maui-android --ignore-failed-sources
+        run: dotnet workload install maui --ignore-failed-sources
 
       - name: Decode Keystore
         run: |
