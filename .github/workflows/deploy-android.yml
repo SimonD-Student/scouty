@@ -8,6 +8,10 @@ on:
       - 'Scouty.Shared/**'
       - '.github/workflows/deploy-android.yml'
 
+# VARIABLE GLOBALE POUR DÉSACTIVER L'ERREUR DE DATE
+env:
+  CheckEolTargetFramework: false
+
 jobs:
   build-android:
     runs-on: windows-latest
@@ -37,7 +41,6 @@ jobs:
               [IO.File]::WriteAllBytes("scouty.keystore", $bytes)
           }
 
-      # J'ai remis CheckEolTargetFramework=false car c'est lui qui tue l'erreur ROUGE
       - name: Publish Android App
         run: |
           dotnet publish Scouty.Frontend/Scouty.Frontend.csproj `
@@ -49,8 +52,7 @@ jobs:
             -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" `
             -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}" `
             -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" `
-            -p:TreatWarningsAsErrors=false `
-            -p:CheckEolTargetFramework=false
+            -p:TreatWarningsAsErrors=false
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
