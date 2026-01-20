@@ -19,8 +19,8 @@
 		<ApplicationTitle>Scouty</ApplicationTitle>
 		<ApplicationId>com.companyname.scouty.frontend</ApplicationId>
 
-		<ApplicationDisplayVersion>1.3</ApplicationDisplayVersion>
-		<ApplicationVersion>4</ApplicationVersion>
+		<ApplicationDisplayVersion>1.4</ApplicationDisplayVersion>
+		<ApplicationVersion>5</ApplicationVersion>
 
 		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</TargetPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
